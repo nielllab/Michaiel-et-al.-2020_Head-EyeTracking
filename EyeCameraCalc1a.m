@@ -1,5 +1,5 @@
 %%%%% Eye Camera Calculations
-function [newtheta,newphi,EllipseParams,ExtraParams usegood ngood calibrationR calibrationM scale] = EyeCameraCalc1(numFrames,Pointsx,Pointsy,Likelihood,eyethresh)
+function [newtheta,newphi,EllipseParams,ExtraParams usegood ngood calibrationR calibrationM scale] = EyeCameraCalc1a(numFrames,Pointsx,Pointsy,Likelihood,eyethresh)
 
 % Inputs:
 %   Vid1 - 3D grayscale array of video frames

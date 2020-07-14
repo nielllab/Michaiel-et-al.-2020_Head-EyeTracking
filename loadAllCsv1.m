@@ -61,7 +61,7 @@ for j=1:length(fileList) %%% loop over all top camera files
     Data(j).difRL = length(Data(j).DataR)-length(Data(j).DataL)
     
     %%% extract headpoints and cricket points from top camera
-    aligned = alignHead_clean(fname,8,0,.995, .95)
+    aligned = alignHead1(fname,8,0,.995, .95)
     Data(j).mouse_xyRaw=aligned.mouse_xy;
     Data(j).mouseVRaw=aligned.mouseSp;
     Data(j).thetaRaw=aligned.theta;
@@ -82,7 +82,7 @@ for j=1:length(fileList) %%% loop over all top camera files
     %%% read in accelerometer data
     if doAcc
         accname = strcat(sname{1},'_','acc','_',sname{3},'_',date,'_',clipnum,'.dat')
-        accData = getAcc_clean(accname,frRate);
+        accData = getAcc1(accname,frRate);
         Data(j).accTS=accData.accTs;  %%% timestamps
         Data(j).rawAcc=accData.rawAcc;   %%% raw voltages
         Data(j).accTrace =accData.accTrace;  %%% voltages converted to m/sec2 and rad/sec
@@ -97,7 +97,7 @@ for j=1:length(fileList) %%% loop over all top camera files
     end
     
     %%% do ellipse fits and compute angular rotation of those ellipses
-    [Data(j).Rthetaraw,Data(j).Rphiraw,Data(j).EllipseParamsR,Data(j).ExtraParamsR,Data(j).goodReye, Data(j).ngoodR, Data(j).RcalR,Data(j).RcalM, Data(j).scaleR] = EyeCameraCalc1_clean(length(Data(j).xR(:,1)), Data(j).xR,Data(j).yR, Data(j).RLikelihood)
+    [Data(j).Rthetaraw,Data(j).Rphiraw,Data(j).EllipseParamsR,Data(j).ExtraParamsR,Data(j).goodReye, Data(j).ngoodR, Data(j).RcalR,Data(j).RcalM, Data(j).scaleR] = EyeCameraCalc1a(length(Data(j).xR(:,1)), Data(j).xR,Data(j).yR, Data(j).RLikelihood)
     Data(j).XRcentraw=Data(j).EllipseParamsR(:,1);  Data(j).YRcentraw=Data(j).EllipseParamsR(:,2);
     
     figure;imagesc(Data(j).RLikelihood); title('R eye Likelihood');

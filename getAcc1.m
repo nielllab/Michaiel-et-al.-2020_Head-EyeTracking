@@ -1,4 +1,4 @@
-function data = getAcc_clean(accname,framerate)
+function data = getAcc1(accname,framerate)
 filterWin = 5; %%% timepoints to median filter over for acceleration
 
 data=dlmread(accname)

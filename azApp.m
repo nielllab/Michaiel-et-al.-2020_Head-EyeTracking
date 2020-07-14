@@ -2,7 +2,7 @@ close all
 clear all
 
 % load('ACCAnalyzed_AllAnimals_121819_a.mat')
-  load('ACCAnalyzed_AllAnimals_010820_noDLS.mat')
+  load('ACCAnalyzed_AllAnimals_010820_noDLS.mat') 
 % load('ACC_deInter_Analyzed_AllAnimals_011520_a.mat')
 
 clear L H R
