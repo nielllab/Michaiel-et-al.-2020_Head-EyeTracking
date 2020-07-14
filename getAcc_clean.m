@@ -1,4 +1,4 @@
-function data = getAcc(accname,framerate,psfilename)
+function data = getAcc_clean(accname,framerate)
 filterWin = 5; %%% timepoints to median filter over for acceleration
 
 data=dlmread(accname)
@@ -16,9 +16,7 @@ accTs = mod(accTs-8*60*60,24*60*60); %%% time is elapsed secs since midnight 190
 figure
 plot(diff(accTs))
 ylabel('secs'); title(sprintf('diff of acc timestamps; median = %0.3f',median(diff(accTs))));
-if exist('psfilename','var')
-    savePDF=1;
-end
+
 
 rawAcc=data(:,2:7);
 filtAcc = (medfilt1(rawAcc(:,1:3),filterWin)-2.5)*1.6; %  acc ch conversion and filtering
@@ -43,8 +41,6 @@ plot(accTs-accTs(1),acc);
 plot(accTs-accTs(1),gyro);
 xlabel('secs'); ylim([0 5]);
 
-if exist('psfilename','var')
-    savePDF=1;
     
 clear data
 data.accTrace(:,1:3) = acc;

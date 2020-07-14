@@ -1,11 +1,11 @@
-function data = alignHead(fname, nPts,showMovies,psfilename, mousethresh, crickthresh)
+function data = alignHead(fname, nPts,showMovies, mousethresh, crickthresh)
 %%% reads in csv data from deepLabCut with head and cricket positions
 %%%
 %%% computes head position, even in presence of noisy/absent points, by
 %%% aligning and fitting to relatively locations of points
 %%%
 %%% some aspects assume 8 points in standard configuration (e.g. first =
-%%% noise, last = middle of head)
+%%% nose, last = middle of head)
 %%%
 %%% also loads cricket position and computes relative range, azimuth
 %%%
@@ -21,15 +21,7 @@ function data = alignHead(fname, nPts,showMovies,psfilename, mousethresh, crickt
 % % % data.crickSp = crickSp  smoothed cricket speed (pix/frame)
 % % % data.range = range;   distance to cricket from mouse (pix)
 % % % data.az = az;    angle of cricket relative to head direction
-if exist('psfilename','var')
-    savePDF=1;
-end
 
-
-
-% if ~exist('fname','var')
-%     fname =  'top_cricket1_062519_3DeepCut_resnet50_TopVidJun25shuffle1_900000_numeric.csv';
-% end
 
 if ~exist('showMovies','var')
     showMovies = 1; %%% change this to 0 after debugging
@@ -73,12 +65,6 @@ for i = 1:nPts
     plot(squeeze(pts(i,1,:)),squeeze(pts(i,2,:)),'k'); axis square
  
 end
-if savePDF
-    set(gcf, 'PaperPositionMode', 'auto');
-    print('-dpsc',psfilename,'-append');
-end
-close(gcf)
-
 
 %%% find times when all pts are good
 good = p>p_thresh; %%% select points over threshold
@@ -86,21 +72,12 @@ useN = sum(good,1);
 figure
 plot(useN); xlabel('frame'); ylabel('#of good points'); ylim([0 nPts]);
 use = useN==nPts; %%% for now, only use times when all points are good
-if savePDF
-    set(gcf, 'PaperPositionMode', 'auto');
-    print('-dpsc',psfilename,'-append');
-end
-close(gcf)
 
 
 badFraction = 1-mean(good,2);
 figure
 bar(badFraction); ylabel('fraction bad timepoints'); xlabel('point #'); ylim([0 1])
-if savePDF
-    set(gcf, 'PaperPositionMode', 'auto');
-    print('-dpsc',psfilename,'-append');
-end
-close(gcf)
+
 
 %%% draw all points on tracks
 figure
@@ -192,11 +169,7 @@ for i = 1:nPts
 end
 % drawHead(meanHead); axis square; axis equal
 title('alignment from times with all good points')
-if savePDF
-    set(gcf, 'PaperPositionMode', 'auto');
-    print('-dpsc',psfilename,'-append');
-end
-close(gcf)
+
 
 
 % if showMovies
@@ -300,11 +273,7 @@ thAll(thAll>pi) = thAll(thAll>pi)-2*pi;  %%% range = -pi : pi
 figure
 plot(thAll); title('final theta')
 xlabel('frame'); ylabel('theta');
-if savePDF
-    set(gcf, 'PaperPositionMode', 'auto');
-    print('-dpsc',psfilename,'-append');
-end
-close(gcf)
+
 
 meanHeadAll = nanmean(alignedAll,3);
 figure
@@ -314,11 +283,6 @@ for i = 1:nPts
 end
 % drawHead(meanHeadAll); axis square; axis equal
 title('alignment from all timepoints')
-if savePDF
-    set(gcf, 'PaperPositionMode', 'auto');
-    print('-dpsc',psfilename,'-append');
-end
-close(gcf)
 
 % if showMovies
 %     figure
@@ -375,11 +339,6 @@ plot(crick(1,:),crick(2,:),'k');hold on
 plot(crickH(1,:),crickH(2,:),'ob');hold on
 plot(crickH(1,:),crickH(2,:),'k');hold on
 
-if savePDF
-    set(gcf, 'PaperPositionMode', 'auto');
-    print('-dpsc',psfilename,'-append');
-end
-close(gcf)
 
 
 %    for v=1:length(p_thresh_c)

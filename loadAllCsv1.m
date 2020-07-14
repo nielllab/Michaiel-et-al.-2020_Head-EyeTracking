@@ -61,7 +61,7 @@ for j=1:length(fileList) %%% loop over all top camera files
     Data(j).difRL = length(Data(j).DataR)-length(Data(j).DataL)
     
     %%% extract headpoints and cricket points from top camera
-    aligned = alignHead(fname,8,0,psfilename,.995, .95)
+    aligned = alignHead_clean(fname,8,0,.995, .95)
     Data(j).mouse_xyRaw=aligned.mouse_xy;
     Data(j).mouseVRaw=aligned.mouseSp;
     Data(j).thetaRaw=aligned.theta;
@@ -82,7 +82,7 @@ for j=1:length(fileList) %%% loop over all top camera files
     %%% read in accelerometer data
     if doAcc
         accname = strcat(sname{1},'_','acc','_',sname{3},'_',date,'_',clipnum,'.dat')
-        accData = getAcc(accname,frRate,psfilename);
+        accData = getAcc_clean(accname,frRate);
         Data(j).accTS=accData.accTs;  %%% timestamps
         Data(j).rawAcc=accData.rawAcc;   %%% raw voltages
         Data(j).accTrace =accData.accTrace;  %%% voltages converted to m/sec2 and rad/sec
@@ -96,7 +96,8 @@ for j=1:length(fileList) %%% loop over all top camera files
         Data(j).yR(2:2:end) = Data(j).yR(2:2:end) -1;
     end
     
-    [Data(j).Rthetaraw,Data(j).Rphiraw,Data(j).EllipseParamsR,Data(j).ExtraParamsR,Data(j).goodReye, Data(j).ngoodR, Data(j).RcalR,Data(j).RcalM, Data(j).scaleR] = EyeCameraCalc1(length(Data(j).xR(:,1)), Data(j).xR,Data(j).yR, Data(j).RLikelihood,psfilename)
+    %%% do ellipse fits and compute angular rotation of those ellipses
+    [Data(j).Rthetaraw,Data(j).Rphiraw,Data(j).EllipseParamsR,Data(j).ExtraParamsR,Data(j).goodReye, Data(j).ngoodR, Data(j).RcalR,Data(j).RcalM, Data(j).scaleR] = EyeCameraCalc1_clean(length(Data(j).xR(:,1)), Data(j).xR,Data(j).yR, Data(j).RLikelihood)
     Data(j).XRcentraw=Data(j).EllipseParamsR(:,1);  Data(j).YRcentraw=Data(j).EllipseParamsR(:,2);
     
     figure;imagesc(Data(j).RLikelihood); title('R eye Likelihood');
@@ -109,9 +110,10 @@ for j=1:length(fileList) %%% loop over all top camera files
         Data(j).yL(2:2:end) = Data(j).yL(2:2:end) -1;
     end
       
-    [Data(j).Lthetaraw,Data(j).Lphiraw,Data(j).EllipseParamsL,Data(j).ExtraParamsL,Data(j).goodLeye,Data(j).ngoodL,Data(j).LcalR,Data(j).LcalM, Data(j).scaleL] = EyeCameraCalc1(length(Data(j).xL(:,1)),Data(j).xL,Data(j).yL, Data(j).LLikelihood,psfilename)
+    [Data(j).Lthetaraw,Data(j).Lphiraw,Data(j).EllipseParamsL,Data(j).ExtraParamsL,Data(j).goodLeye,Data(j).ngoodL,Data(j).LcalR,Data(j).LcalM, Data(j).scaleL] = EyeCameraCalc1_clean(length(Data(j).xL(:,1)),Data(j).xL,Data(j).yL, Data(j).LLikelihood)
     Data(j).XLcentraw=Data(j).EllipseParamsL(:,1);  Data(j).YLcentraw=Data(j).EllipseParamsL(:,2);
     
+    % radius calculated as avg of long and short aces of ellipse 
     Data(j).RRadRaw = (Data(j).EllipseParamsR(:,3)+ Data(j).EllipseParamsR(:,4))/2;
     Data(j).LRadRaw = (Data(j).EllipseParamsL(:,3)+ Data(j).EllipseParamsL(:,4))/2;
     
@@ -139,10 +141,7 @@ for j=1:length(fileList) %%% loop over all top camera files
         RTS = dlmread(rTSfile);
         RTS= RTS(:,1)*60*60 + RTS(:,2)*60 + RTS(:,3);
         if deInter
-            RTSnew = zeros(size(RTS,1)*2,1);
-%             RTSnew(1:2:end) = RTS;  %%% switch order of deinterlaced frames
-%             RTSnew(2:2:end) = RTS - 0.5*median(diff(RTS));
-            
+            RTSnew = zeros(size(RTS,1)*2,1);      
             %%% shift each deinterlacted frame by 0.5 frame period
             %%% forward/back relative to timestamp
             RTSnew(1:2:end) = RTS  + 0.25*median(diff(RTS));  %%% switch order of deinterlaced frames
@@ -325,6 +324,6 @@ for j=1:length(fileList) %%% loop over all top camera files
     end
 pFile='T:\PreyCaptureAnalysis\Data\';
 end
-afilename=('DEINTERLACED_061120_halfShift_a.mat')
+afilename=('DEINTERLACED_multAniTest_071420.mat')
 save(fullfile(pFile, afilename))
 
